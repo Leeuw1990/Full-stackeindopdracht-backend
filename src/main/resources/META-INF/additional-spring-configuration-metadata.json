@@ -1,0 +1,13 @@
+{
+  "properties": [
+    {
+      "name": "jeffreyeindopdracht.app.jwtSecret",
+      "type": "java.lang.String",
+      "description": "Description for jeffreyeindopdracht.app.jwtSecret."
+    },
+    {
+      "name": "jeffreyeindopdracht.app.jwtExpirationMs",
+      "type": "java.lang.String",
+      "description": "Description for jeffreyeindopdracht.app.jwtExpirationMs."
+    }
+  ] }
