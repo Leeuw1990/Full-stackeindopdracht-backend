@@ -5,6 +5,7 @@ public class ProductResponseFile {
     private String url;
     private String type;
     private long size;
+    private String comment;
 
     public ProductResponseFile(String nameDB, String url, String type, long size) {
         this.nameDB = nameDB;
@@ -44,4 +45,5 @@ public class ProductResponseFile {
     public void setSize(long size) {
         this.size = size;
     }
+
 }

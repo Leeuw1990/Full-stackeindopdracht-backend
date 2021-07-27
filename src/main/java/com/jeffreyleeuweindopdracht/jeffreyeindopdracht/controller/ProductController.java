@@ -1,23 +1,20 @@
 package com.jeffreyleeuweindopdracht.jeffreyeindopdracht.controller;
 
-import com.jeffreyleeuweindopdracht.jeffreyeindopdracht.Repository.ProductRepository;
 import com.jeffreyleeuweindopdracht.jeffreyeindopdracht.message.ProductResponseFile;
 import com.jeffreyleeuweindopdracht.jeffreyeindopdracht.message.ProductResponseMessage;
 import com.jeffreyleeuweindopdracht.jeffreyeindopdracht.model.Product;
-import com.jeffreyleeuweindopdracht.jeffreyeindopdracht.service.ProductFileStorageService;
+import com.jeffreyleeuweindopdracht.jeffreyeindopdracht.model.ProductList;
 import com.jeffreyleeuweindopdracht.jeffreyeindopdracht.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -28,8 +25,8 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-    @Autowired
-    private ProductFileStorageService storageService;
+//    @Autowired
+//    private ProductFileStorageService storageService;
 
 //    @ResponseBody
 //    @RequestMapping(value = "")
@@ -39,8 +36,9 @@ public class ProductController {
 //        return productResponse;
 //    }
 
+    // Postmapping to create a new product object.
     @PostMapping(value = "")
-    public ResponseEntity<Object> createProduct(long id, @RequestBody Product product) {
+    public ResponseEntity<Object> createProduct(@RequestBody Product product, String id) {
         String newId = productService.createProduct(product, id);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("{id}")
                 .buildAndExpand(newId).toUri();
@@ -49,37 +47,34 @@ public class ProductController {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<Object> updateProductList(@PathVariable("id") long id, @RequestBody Product product) {
+    public ResponseEntity<Object> updateProductList(@PathVariable("id") String id, @RequestBody Product product) {
         productService.updateProduct(id, product);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Object> deleteProduct(@PathVariable("id") long id) {
+    public ResponseEntity<Object> deleteProduct(@PathVariable("id") String id) {
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();
     }
-
-    @GetMapping(value = "/{id}")
-    public ResponseEntity<Optional<Product>> getProduct(@PathVariable("id") long id) {
-        return ResponseEntity.ok().body(productService.getProductById(id));
-    }
+//    public ResponseEntity<Object> getProduct(@RequestParam(required = false) String id) {
 
     @GetMapping(value = "")
-    public ResponseEntity<Object> getProduct(@RequestParam(required = false) String shopName) {
-        if (shopName != null && !shopName.isEmpty()) {
-            return ResponseEntity.ok().body(productService.getProductByShopName(shopName));
+    public ResponseEntity<Object> getProduct(@RequestParam(required = false) String id) {
+        if (id != null && !id.isEmpty()) {
+            return ResponseEntity.ok().body(productService.getProductById(id));
         }
         else {
             return ResponseEntity.ok().body(productService.getProduct());
         }
     }
 
+    //postmapping to upload a file, but it doesnt create a new object with connected ID's. How to solve this problem?
     @PostMapping("/upload")
     public ResponseEntity<ProductResponseMessage> uploadFile(@RequestParam("file") MultipartFile file) {
         String message = "";
         try {
-            storageService.store(file);
+            productService.store(file);
 
             message = "Uploaded the file successfully: " + file.getOriginalFilename();
             return ResponseEntity.status(HttpStatus.OK).body(new ProductResponseMessage(message));
@@ -91,7 +86,7 @@ public class ProductController {
 
     @GetMapping("/files")
     public ResponseEntity<List<ProductResponseFile>> getListFiles() {
-        List<ProductResponseFile> files = storageService.getAllFiles().map(product -> {
+        List<ProductResponseFile> files = productService.getAllFiles().map(product -> {
             String fileDownloadUri = ServletUriComponentsBuilder
                     .fromCurrentContextPath()
                     .path("/api/product/files/")
@@ -110,7 +105,7 @@ public class ProductController {
 
     @GetMapping("/files/{id}")
     public ResponseEntity<byte[]> getFile(@PathVariable String id) {
-        Product product = storageService.getFile(id);
+        Product product = productService.getFile(id);
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + product.getNameDB() + "\"")

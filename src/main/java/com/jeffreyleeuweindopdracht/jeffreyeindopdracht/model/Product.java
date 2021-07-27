@@ -1,16 +1,18 @@
 package com.jeffreyleeuweindopdracht.jeffreyeindopdracht.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.util.Optional;
+import java.util.UUID;
+
 
 @Entity
 public class Product {
 
     @Id
-    @GeneratedValue(generator = "uuid")
+    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
     private String id;
 
@@ -20,7 +22,7 @@ public class Product {
     @Column(nullable = true, unique = false, length = 10)
     private int price;
 
-    @Column(nullable = true, unique = false, length = 30)
+    @Column(nullable = true, unique = false, length = 255)
     private String comment;
 
     @Column
@@ -41,9 +43,10 @@ public class Product {
 //    @JsonIgnoreProperties("product")
 //    private ProductList productList;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "productList_id")
-    @JsonIgnoreProperties("product")
+    //Many-to-one bi-directional relation between product to productList
+    @JsonBackReference
+    @ManyToOne
+    @JoinColumn(name = "product_list_id")
     private ProductList productList;
 
 

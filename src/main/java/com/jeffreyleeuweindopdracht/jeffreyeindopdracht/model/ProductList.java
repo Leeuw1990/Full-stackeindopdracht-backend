@@ -1,6 +1,7 @@
 package com.jeffreyleeuweindopdracht.jeffreyeindopdracht.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -17,6 +18,8 @@ public class ProductList {
     @Column(nullable = false, unique = true, length = 25)
     private String listName;
 
+    // Bi-directional relation between productList to product. @JsonIgnoreProperties to avoid a infinite recursion.
+    @JsonManagedReference
     @OneToMany(mappedBy = "productList",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Product> products = new ArrayList<>();
 
@@ -36,12 +39,12 @@ public class ProductList {
     }
 
     public void addProduct(Product product) {
-        products.add(product);
+        this.products.add(product);
         product.setProductList(this);
     }
 
     public void removeProduct(Product product) {
-        products.remove(product);
+        this.products.remove(product);
         product.setProductList(null);
     }
 
@@ -55,7 +58,8 @@ public class ProductList {
 
     public void setProducts(List<Product> products) {
         this.products = products;
-    }
+        }
+
 
     public String getListName() {
         return listName;
@@ -71,20 +75,5 @@ public class ProductList {
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (!(o instanceof ProductList))
-            return false;
-        return
-                id > 0 &&
-                id ==(((ProductList) o).getId());
-    }
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
     }
 }
