@@ -1,7 +1,6 @@
 package com.jeffreyleeuweindopdracht.jeffreyeindopdracht.controller;
 
 import com.jeffreyleeuweindopdracht.jeffreyeindopdracht.exception.BadRequestException;
-import com.jeffreyleeuweindopdracht.jeffreyeindopdracht.exception.ForbiddenException;
 import com.jeffreyleeuweindopdracht.jeffreyeindopdracht.exception.NotAuthorizedException;
 import com.jeffreyleeuweindopdracht.jeffreyeindopdracht.exception.RecordNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -41,10 +40,5 @@ public class ExceptionController {
         return new ResponseEntity<>(message, HttpStatus.UNAUTHORIZED);
     }
 
-    @ExceptionHandler(value = ForbiddenException.class)
-    public ResponseEntity<Object> exception(ForbiddenException exception) {
-        String message = exception.getMessage();
-        return new ResponseEntity<>(message, HttpStatus.FORBIDDEN);
-    }
 
 }

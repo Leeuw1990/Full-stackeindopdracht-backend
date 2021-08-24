@@ -1,11 +1,10 @@
 package com.jeffreyleeuweindopdracht.jeffreyeindopdracht.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.util.UUID;
+
 
 
 @Entity
@@ -16,11 +15,14 @@ public class Product {
     @GenericGenerator(name = "uuid", strategy = "uuid2")
     private String id;
 
+    @Column
+    private int rating;
+
     @Column(nullable = true, unique = false, length = 30)
     private String shopName;
 
     @Column(nullable = true, unique = false, length = 10)
-    private int price;
+    private float price;
 
     @Column(nullable = true, unique = false, length = 255)
     private String comment;
@@ -35,14 +37,6 @@ public class Product {
     @Column
     private byte[] data;
 
-    public Product() {
-    }
-
-//    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-//    @JoinColumn(name = "productListId")
-//    @JsonIgnoreProperties("product")
-//    private ProductList productList;
-
     //Many-to-one bi-directional relation between product to productList
     @JsonBackReference
     @ManyToOne
@@ -56,6 +50,13 @@ public class Product {
         this.data = data;
     }
 
+    public Product(String id) {
+        this.id = id;
+    }
+
+    public Product() {
+    }
+
     public ProductList getProductList() {
         return productList;
     }
@@ -63,7 +64,6 @@ public class Product {
     public void setProductList(ProductList productList) {
         this.productList = productList;
     }
-
 
     public void setId(String id) {
         this.id = id;
@@ -105,11 +105,11 @@ public class Product {
         this.shopName = shopName;
     }
 
-    public int getPrice() {
+    public float getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(float price) {
         this.price = price;
     }
 
@@ -121,19 +121,12 @@ public class Product {
         this.comment = comment;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (!(o instanceof Product))
-            return false;
-        return
-                id != null &&
-                        id.equals(((Product) o).getId());
+    public int getRating() {
+        return rating;
     }
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
+
+    public void setRating(int rating) {
+        this.rating = rating;
     }
 
 }

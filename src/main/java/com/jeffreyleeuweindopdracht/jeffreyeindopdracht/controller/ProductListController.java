@@ -16,13 +16,15 @@ import java.util.Optional;
 @RequestMapping(value = "/api/productlist")
 public class ProductListController {
 
-    @Autowired
     private ProductListService productListService;
 
-
+    @Autowired
+    public void setProductListService (ProductListService productListService) {
+        this.productListService = productListService;
+    }
 
     @PostMapping(value = "")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     public ResponseEntity<Object> createProductList(@RequestBody ProductList productList) {
         long newId = productListService.createProductList(productList);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("{id}")
@@ -32,26 +34,20 @@ public class ProductListController {
     }
 
     @DeleteMapping(value = "/{id}")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     public ResponseEntity<Object> deleteProductList(@PathVariable("id") long id) {
         productListService.deleteProductList(id);
         return ResponseEntity.noContent().build();
     }
 
-
     @GetMapping(value = "")
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<Object> getProductList(@RequestParam(required = false) String listName) {
-        if (listName != null && !listName.isEmpty()) {
-            return ResponseEntity.ok().body(productListService.getProductListByListName(listName));
-        }
-        else {
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
+    public ResponseEntity<Object> getProductList() {
             return ResponseEntity.ok().body(productListService.getProductList());
-        }
     }
 
     @GetMapping(value = "/{id}")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     public ResponseEntity<Optional<ProductList>> getProductListById(@PathVariable("id") long id) {
         return ResponseEntity.ok().body(productListService.getProductListById(id));
     }

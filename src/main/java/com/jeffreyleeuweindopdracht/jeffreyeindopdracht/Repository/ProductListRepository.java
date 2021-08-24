@@ -10,6 +10,5 @@ import java.util.Collection;
 @Repository
 public interface ProductListRepository extends JpaRepository<ProductList, Long> {
 
-    public Collection<ProductList> findAllByUsersAndListName(Users users, String listName);
     public Collection<ProductList> findAllByUsers(Users users);
 }

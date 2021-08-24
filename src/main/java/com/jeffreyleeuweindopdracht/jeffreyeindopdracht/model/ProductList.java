@@ -23,29 +23,18 @@ public class ProductList {
     @OneToMany(mappedBy = "productList",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Product> products = new ArrayList<>();
 
-
-
-//    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-//    @JoinTable(name = "user_productList",
-//        joinColumns = {@JoinColumn(name = "product_list_id")},
-//        inverseJoinColumns = {@JoinColumn(name = "user_id")})
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "users_id")
     @JsonIgnoreProperties("productLists")
     private Users users;
 
+    public void addProducts(String id) {
+        Product product = new Product(id);
+        products.add(product);
+    }
+
     public Users getUsers() {
         return users;
-    }
-
-    public void addProduct(Product product) {
-        this.products.add(product);
-        product.setProductList(this);
-    }
-
-    public void removeProduct(Product product) {
-        this.products.remove(product);
-        product.setProductList(null);
     }
 
     public void setUser(Users users) {
@@ -76,4 +65,5 @@ public class ProductList {
     public void setId(long id) {
         this.id = id;
     }
+
 }

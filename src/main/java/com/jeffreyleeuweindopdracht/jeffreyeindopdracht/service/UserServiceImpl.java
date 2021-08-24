@@ -80,9 +80,9 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
-    @Override
-    public Users getCurrentUser(Principal principal) {
-        if (principal.getName() == null) throw new NotAuthorizedException();
-        return getUserByUsername(principal.getName());
-    }
+//    @Override
+//    public Users getCurrentUser(Principal principal) {
+//        if (principal.getName() == null) throw new NotAuthorizedException();
+//        return getUserByUsername(principal.getName());
+//    }
 }

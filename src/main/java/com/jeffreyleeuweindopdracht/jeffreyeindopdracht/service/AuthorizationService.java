@@ -79,7 +79,6 @@ public class AuthorizationService {
                     .body(new MessageResponse("Error: Email is already in use!"));
         }
 
-        // Create new user's account
         Users user = new Users(
                 signUpRequest.getUsername(),
                 signUpRequest.getEmail(),

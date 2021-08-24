@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.security.RolesAllowed;
 import java.security.Principal;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -30,7 +31,7 @@ public class UserController {
     }
 
     @GetMapping("/allusers")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     public ResponseEntity<Object> userAccess() {
         return ResponseEntity.ok().body(userService.getAllUsers());
     }
@@ -48,7 +49,7 @@ public class UserController {
     }
 
     @PatchMapping("/user/{username}/details/update")
-    @PreAuthorize("#username == authentication.principal.username")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     public ResponseEntity<Object> updateUser(@PathVariable String username, Principal principal, @RequestBody UpdateUserRequest updateRequest) {
         userService.updateUserByUsername(username, principal, updateRequest);
         return ResponseEntity.ok().body(new MessageResponse("User details updated successfully!"));

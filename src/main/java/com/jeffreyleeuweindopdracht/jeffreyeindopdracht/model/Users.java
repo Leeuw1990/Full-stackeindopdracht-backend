@@ -65,16 +65,6 @@ public class Users {
         this.lastName = lastName;
     }
 
-    public void addProductList(ProductList productList) {
-        productLists.add(productList);
-        productList.setUser(this);
-    }
-
-    public void removeProductList(ProductList productList) {
-        productLists.remove(productList);
-        productList.setUser(null);
-    }
-
     public List<ProductList> getProductLists() {
         return productLists;
     }

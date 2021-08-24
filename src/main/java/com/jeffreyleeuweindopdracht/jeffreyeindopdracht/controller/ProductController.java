@@ -3,7 +3,6 @@ package com.jeffreyleeuweindopdracht.jeffreyeindopdracht.controller;
 import com.jeffreyleeuweindopdracht.jeffreyeindopdracht.message.ProductResponseFile;
 import com.jeffreyleeuweindopdracht.jeffreyeindopdracht.message.ProductResponseMessage;
 import com.jeffreyleeuweindopdracht.jeffreyeindopdracht.model.Product;
-import com.jeffreyleeuweindopdracht.jeffreyeindopdracht.model.ProductList;
 import com.jeffreyleeuweindopdracht.jeffreyeindopdracht.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,60 +20,27 @@ import java.util.stream.Collectors;
 @RequestMapping(value = "/api/product")
 public class ProductController {
 
-    @Autowired
+
     private ProductService productService;
 
-//    @Autowired
-//    private ProductFileStorageService storageService;
-
-//    @ResponseBody
-//    @RequestMapping(value = "")
-//    public List<Product> getProductDetails() {
-//        List<Product> productResponse = (List<Product>) productRepository.findAll();
-//
-//        return productResponse;
-//    }
-
-    // Postmapping to create a new product object.
-    @PostMapping(value = "")
-    public ResponseEntity<Object> createProduct(@RequestBody Product product, String id) {
-        String newId = productService.createProduct(product, id);
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("{id}")
-                .buildAndExpand(newId).toUri();
-
-        return ResponseEntity.created(location).build();
+    @Autowired
+    public void setProductService (ProductService productService) {
+        this.productService = productService;
     }
 
-    @PutMapping(value = "/{id}")
+    @PatchMapping(value = "files/{id}")
     public ResponseEntity<Object> updateProductList(@PathVariable("id") String id, @RequestBody Product product) {
         productService.updateProduct(id, product);
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Object> deleteProduct(@PathVariable("id") String id) {
-        productService.deleteProduct(id);
-        return ResponseEntity.noContent().build();
-    }
-//    public ResponseEntity<Object> getProduct(@RequestParam(required = false) String id) {
 
-    @GetMapping(value = "")
-    public ResponseEntity<Object> getProduct(@RequestParam(required = false) String id) {
-        if (id != null && !id.isEmpty()) {
-            return ResponseEntity.ok().body(productService.getProductById(id));
-        }
-        else {
-            return ResponseEntity.ok().body(productService.getProduct());
-        }
-    }
-
-    //postmapping to upload a file, but it doesnt create a new object with connected ID's. How to solve this problem?
     @PostMapping("/upload")
     public ResponseEntity<ProductResponseMessage> uploadFile(@RequestParam("file") MultipartFile file) {
+
         String message = "";
         try {
             productService.store(file);
-
             message = "Uploaded the file successfully: " + file.getOriginalFilename();
             return ResponseEntity.status(HttpStatus.OK).body(new ProductResponseMessage(message));
         } catch (Exception e) {
@@ -94,6 +59,10 @@ public class ProductController {
                     .toUriString();
 
             return new ProductResponseFile(
+                    product.getRating(),
+                    product.getShopName(),
+                    product.getPrice(),
+                    product.getComment(),
                     product.getNameDB(),
                     fileDownloadUri,
                     product.getType(),
