@@ -10,5 +10,4 @@ public interface ProductListService {
     public abstract long createProductList(ProductList productList);
     public abstract void deleteProductList(long id);
     public abstract Collection<ProductList> getProductList();
-    public abstract Optional<ProductList> getProductListById(long id);
 }

@@ -12,5 +12,4 @@ public interface UserService {
     Users getUserByUsername(String username);
     void updateUserByUsername(String username, Principal principal, UpdateUserRequest userRequest);
     Map<String, String> getUserDetailsByUsername(String username);
-//    Users getCurrentUser(Principal principal);
 }

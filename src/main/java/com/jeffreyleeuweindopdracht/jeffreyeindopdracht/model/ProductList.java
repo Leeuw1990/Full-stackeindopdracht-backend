@@ -15,10 +15,10 @@ public class ProductList {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(nullable = false, unique = true, length = 25)
+    @Column(nullable = false, unique = false, length = 25)
     private String listName;
 
-    // Bi-directional relation between productList to product. @JsonIgnoreProperties to avoid a infinite recursion.
+    // Bi-directional relation between productList to product. @JsonManagedReference to avoid a infinite recursion.
     @JsonManagedReference
     @OneToMany(mappedBy = "productList",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Product> products = new ArrayList<>();

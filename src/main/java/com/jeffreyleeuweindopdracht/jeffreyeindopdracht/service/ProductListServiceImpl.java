@@ -44,17 +44,6 @@ public class ProductListServiceImpl implements ProductListService {
     }
 
     @Override
-    public Optional<ProductList> getProductListById(long id) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentPrincipalName = authentication.getName();
-        Users users = (userRepository.findByUsername(currentPrincipalName).orElse(null));
-        Optional <ProductList> productList = productListRepository.findById(id);
-        if (!productListRepository.existsById(id)) throw new RecordNotFoundException();
-        if (productList.get().getUsers().getId() != users.getId()) throw new NotAuthorizedException();
-        return productList;
-    }
-
-    @Override
     public Collection<ProductList> getProductList() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentPrincipalName = authentication.getName();

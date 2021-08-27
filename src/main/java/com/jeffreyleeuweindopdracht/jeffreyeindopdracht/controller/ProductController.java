@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -20,7 +21,6 @@ import java.util.stream.Collectors;
 @RequestMapping(value = "/api/product")
 public class ProductController {
 
-
     private ProductService productService;
 
     @Autowired
@@ -31,9 +31,8 @@ public class ProductController {
     @PatchMapping(value = "files/{id}")
     public ResponseEntity<Object> updateProductList(@PathVariable("id") String id, @RequestBody Product product) {
         productService.updateProduct(id, product);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.status(HttpStatus.OK).body(new ProductResponseMessage("Updated"));
     }
-
 
     @PostMapping("/upload")
     public ResponseEntity<ProductResponseMessage> uploadFile(@RequestParam("file") MultipartFile file) {

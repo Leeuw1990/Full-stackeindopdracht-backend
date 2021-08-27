@@ -1,5 +1,6 @@
 package com.jeffreyleeuweindopdracht.jeffreyeindopdracht.service.security;
 
+import com.jeffreyleeuweindopdracht.jeffreyeindopdracht.service.UserDetailsServiceImpl;
 import com.jeffreyleeuweindopdracht.jeffreyeindopdracht.service.security.jwt.AuthEntryPointJwt;
 import com.jeffreyleeuweindopdracht.jeffreyeindopdracht.service.security.jwt.AuthTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +26,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 )
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Qualifier("userDetailsServiceImpl")
+
     @Autowired
-    UserDetailsService userDetailsService;
+    UserDetailsServiceImpl userDetailsService;
 
     @Autowired
     private AuthEntryPointJwt unauthorizedHandler;
@@ -59,9 +60,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests().antMatchers("/api/auth/**").permitAll()
-                .antMatchers("/api/productlist/**").authenticated()
                 .antMatchers("/api/product/files/**").permitAll()
                 .antMatchers("/api/product/upload/**").permitAll()
+                .antMatchers("/api/product/**").permitAll()
                 .anyRequest().authenticated();
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
