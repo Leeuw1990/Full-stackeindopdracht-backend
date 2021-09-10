@@ -14,6 +14,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 
@@ -28,6 +29,14 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     public void setProductRepository (ProductRepository productRepository) {
         this.productRepository = productRepository;
+    }
+
+    @Override
+    public void deleteProduct(String id) {
+        Optional <Product> product = productRepository.findById(id);
+        if(!productRepository.existsById(id)) throw new RecordNotFoundException();
+        product.get().getId();
+        productRepository.deleteById(id);
     }
 
     @Override

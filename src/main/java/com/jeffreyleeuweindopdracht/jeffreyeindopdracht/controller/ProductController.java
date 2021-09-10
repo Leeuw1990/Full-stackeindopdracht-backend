@@ -28,8 +28,14 @@ public class ProductController {
         this.productService = productService;
     }
 
+    @DeleteMapping(value = "files/{id}")
+    public ResponseEntity<Object> deleteProduct(@PathVariable("id") String id) {
+        productService.deleteProduct(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @PatchMapping(value = "files/{id}")
-    public ResponseEntity<Object> updateProductList(@PathVariable("id") String id, @RequestBody Product product) {
+    public ResponseEntity<Object> updateProduct(@PathVariable("id") String id, @RequestBody Product product) {
         productService.updateProduct(id, product);
         return ResponseEntity.status(HttpStatus.OK).body(new ProductResponseMessage("Updated"));
     }
