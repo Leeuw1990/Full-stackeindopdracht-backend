@@ -13,13 +13,13 @@ public class ProductList {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(nullable = false, unique = false, length = 25)
     private String listName;
 
-    // Bi-directional relation between productList to product. @JsonManagedReference to avoid a infinite recursion.
-    @JsonManagedReference
+//     Bi-directional relation between productList to product. @JsonManagedReference to avoid a infinite recursion
+//    @JsonManagedReference
     @OneToMany(mappedBy = "productList",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Product> products = new ArrayList<>();
 
@@ -28,10 +28,10 @@ public class ProductList {
     @JsonIgnoreProperties("productLists")
     private Users users;
 
-    public void addProducts(String id) {
-        Product product = new Product(id);
-        products.add(product);
-    }
+//    public void addProducts(String id) {
+//        Product product = new Product(id);
+//        products.add(product);
+//    }
 
     public Users getUsers() {
         return users;
@@ -62,7 +62,7 @@ public class ProductList {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

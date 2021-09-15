@@ -1,7 +1,10 @@
 package com.jeffreyleeuweindopdracht.jeffreyeindopdracht.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 
@@ -38,9 +41,10 @@ public class Product {
     private byte[] data;
 
     //Many-to-one bi-directional relation between product to productList
-    @JsonBackReference
-    @ManyToOne
-    @JoinColumn(name = "product_list_id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "product_list_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonIgnore
     private ProductList productList;
 
 

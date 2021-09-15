@@ -3,6 +3,7 @@ package com.jeffreyleeuweindopdracht.jeffreyeindopdracht.controller;
 import com.jeffreyleeuweindopdracht.jeffreyeindopdracht.message.ProductResponseFile;
 import com.jeffreyleeuweindopdracht.jeffreyeindopdracht.message.ProductResponseMessage;
 import com.jeffreyleeuweindopdracht.jeffreyeindopdracht.model.Product;
+import com.jeffreyleeuweindopdracht.jeffreyeindopdracht.service.ProductListService;
 import com.jeffreyleeuweindopdracht.jeffreyeindopdracht.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -13,39 +14,42 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
-@RequestMapping(value = "/api/product")
+@RequestMapping(value = "/api/productlist")
 public class ProductController {
 
     private ProductService productService;
+
+    private ProductListService productListService;
 
     @Autowired
     public void setProductService (ProductService productService) {
         this.productService = productService;
     }
 
-    @DeleteMapping(value = "files/{id}")
+    @DeleteMapping(value = "/files/{id}")
     public ResponseEntity<Object> deleteProduct(@PathVariable("id") String id) {
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping(value = "files/{id}")
+    @PatchMapping(value = "/files/{id}")
     public ResponseEntity<Object> updateProduct(@PathVariable("id") String id, @RequestBody Product product) {
         productService.updateProduct(id, product);
         return ResponseEntity.status(HttpStatus.OK).body(new ProductResponseMessage("Updated"));
     }
 
-    @PostMapping("/upload")
-    public ResponseEntity<ProductResponseMessage> uploadFile(@RequestParam("file") MultipartFile file) {
+    @PostMapping("{product_list_id}/upload")
+    public ResponseEntity<ProductResponseMessage> uploadFile(@PathVariable (value = "product_list_id") @RequestParam("file") MultipartFile file, long product_list_id) {
 
         String message = "";
         try {
-            productService.store(file);
+            productService.store(file, product_list_id );
             message = "Uploaded the file successfully: " + file.getOriginalFilename();
             return ResponseEntity.status(HttpStatus.OK).body(new ProductResponseMessage(message));
         } catch (Exception e) {
@@ -54,9 +58,9 @@ public class ProductController {
         }
     }
 
-    @GetMapping("/files")
-    public ResponseEntity<List<ProductResponseFile>> getListFiles() {
-        List<ProductResponseFile> files = productService.getAllFiles().map(product -> {
+    @GetMapping("{product_list_id}/files")
+    public ResponseEntity<List<ProductResponseFile>> getAllFiles(@PathVariable (value = "product_list_id") Long product_list_id, Pageable pageable) {
+        List<ProductResponseFile> files = productService.getAllFiles(product_list_id, pageable).map(product -> {
             String fileDownloadUri = ServletUriComponentsBuilder
                     .fromCurrentContextPath()
                     .path("/api/product/files/")

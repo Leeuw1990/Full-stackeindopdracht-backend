@@ -4,6 +4,8 @@ import com.jeffreyleeuweindopdracht.jeffreyeindopdracht.message.ProductResponseM
 import com.jeffreyleeuweindopdracht.jeffreyeindopdracht.model.ProductList;
 import com.jeffreyleeuweindopdracht.jeffreyeindopdracht.service.ProductListService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,6 +21,7 @@ import java.util.Optional;
 public class ProductListController {
 
     private ProductListService productListService;
+
 
     @Autowired
     public void setProductListService (ProductListService productListService) {

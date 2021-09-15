@@ -1,18 +1,16 @@
 package com.jeffreyleeuweindopdracht.jeffreyeindopdracht.service;
 
+import com.jeffreyleeuweindopdracht.jeffreyeindopdracht.Repository.ProductListRepository;
 import com.jeffreyleeuweindopdracht.jeffreyeindopdracht.Repository.ProductRepository;
 import com.jeffreyleeuweindopdracht.jeffreyeindopdracht.Repository.UserRepository;
 import com.jeffreyleeuweindopdracht.jeffreyeindopdracht.exception.RecordNotFoundException;
 import com.jeffreyleeuweindopdracht.jeffreyeindopdracht.model.Product;
-import com.jeffreyleeuweindopdracht.jeffreyeindopdracht.model.Users;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import org.springframework.data.domain.Pageable;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -22,6 +20,8 @@ import java.util.stream.Stream;
 public class ProductServiceImpl implements ProductService {
 
     private ProductRepository productRepository;
+
+    private ProductListRepository productListRepository;
 
     @Autowired
     UserRepository userRepository;
@@ -51,12 +51,17 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product store(MultipartFile file) throws IOException {
+    public Optional<Product> store(MultipartFile file, Long product_list_id) throws IOException {
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-        Product Product = new Product(fileName, file.getContentType(), file.getBytes());
+        Product product = new Product(fileName, file.getContentType(), file.getBytes());
+
+        return productListRepository.findById(product_list_id).map(productList -> {
+           product.setProductList(productList);
+            return productRepository.save(product);
+        });
 
 
-        return productRepository.save(Product);
+
     }
 
     @Override
@@ -65,8 +70,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Stream<Product> getAllFiles() {
-        return productRepository.findAll().stream();
+    public Stream<Product> getAllFiles(long product_list_id, Pageable pageable) {
+        return productRepository.findByProductListId(product_list_id, pageable).stream();
     }
 
 }
