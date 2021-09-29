@@ -51,6 +51,4 @@ public class ProductListServiceImpl implements ProductListService {
         Collection<ProductList> productLists = productListRepository.findAllByUsers(users);
         return productLists;
     }
-
-
 }
